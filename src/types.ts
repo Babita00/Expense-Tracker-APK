@@ -31,4 +31,10 @@ export interface AppData {
   categories: Category[];
 }
 
+/** The Nepali month a screen is scoped to. `month` is 0-indexed. */
+export interface MonthPeriod {
+  year: number;
+  month: number;
+}
+
 export type Screen = 'dashboard' | 'expenses' | 'categories' | 'settings';

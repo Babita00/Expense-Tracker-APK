@@ -1,18 +1,17 @@
 import { useMemo, useState } from 'react';
-import {
-  MAX_BS_YEAR, MIN_BS_YEAR, MONTHS, MONTHS_NP, addMonths, availableYears, formatMonth, todayBs,
-} from '../lib/nepaliDate';
+import { MAX_BS_YEAR, MIN_BS_YEAR, addMonths, formatMonth, todayBs } from '../lib/nepaliDate';
 import { ChevronLeft, ChevronRight } from './Icons';
+import { MonthYearPicker } from './MonthYearPicker';
 import { Sheet } from './Sheet';
 
-interface Props {
+interface MonthNavProps {
   year: number;
   month: number;
   onChange: (year: number, month: number) => void;
 }
 
 /** The single filter row that scopes everything below it. */
-export function MonthNav({ year, month, onChange }: Props) {
+export function MonthNav({ year, month, onChange }: MonthNavProps) {
   const [open, setOpen] = useState(false);
   const today = useMemo(() => todayBs(), []);
 
@@ -58,63 +57,5 @@ export function MonthNav({ year, month, onChange }: Props) {
         />
       </Sheet>
     </>
-  );
-}
-
-function MonthYearPicker({
-  year, month, onPick,
-}: {
-  year: number;
-  month: number;
-  onPick: (year: number, month: number) => void;
-}) {
-  const [viewYear, setViewYear] = useState(year);
-  const years = useMemo(() => availableYears(), []);
-  const today = useMemo(() => todayBs(), []);
-
-  return (
-    <div>
-      <div className="field">
-        <label className="field-label" htmlFor="year-select">Nepali year</label>
-        <select
-          id="year-select"
-          className="select"
-          value={viewYear}
-          onChange={(e) => setViewYear(Number(e.target.value))}
-        >
-          {years.map((y) => (
-            <option key={y} value={y}>
-              {y}{y === today.year ? ' · current' : ''}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <span className="field-label">Month</span>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-        {MONTHS.map((name, index) => {
-          const selected = viewYear === year && index === month;
-          const isCurrent = viewYear === today.year && index === today.month;
-
-          return (
-            <button
-              key={name}
-              type="button"
-              className="cat-chip"
-              aria-pressed={selected}
-              onClick={() => onPick(viewYear, index)}
-              style={{ padding: '13px 6px' }}
-            >
-              <span className="name" style={{ fontSize: 13.5, fontWeight: selected ? 650 : 560 }}>
-                {name}
-              </span>
-              <span className="name" style={{ fontSize: 11 }}>
-                {MONTHS_NP[index]}{isCurrent ? ' ·' : ''}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-    </div>
   );
 }

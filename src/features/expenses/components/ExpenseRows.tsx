@@ -1,18 +1,18 @@
-import type { DayGroup } from '../lib/analytics';
-import type { Expense } from '../types';
-import { useApp } from '../store';
-import { UNKNOWN_CATEGORY } from '../lib/storage';
-import { WEEKDAYS_LONG, formatBs, formatRelative, weekdayOf } from '../lib/nepaliDate';
-import { rs } from '../lib/money';
+import type { DayGroup } from '../../../lib/analytics';
+import type { Expense } from '../../../types';
+import { useApp } from '../../../store';
+import { UNKNOWN_CATEGORY } from '../../../lib/storage';
+import { WEEKDAYS_LONG, formatBs, formatRelative, weekdayOf } from '../../../lib/nepaliDate';
+import { rs } from '../../../lib/money';
 
-interface Props {
+interface ExpenseRowsProps {
   groups: DayGroup[];
   onEdit: (expense: Expense) => void;
   /** Hide the per-day header when the list is already scoped to one day. */
   showDayHeaders?: boolean;
 }
 
-export function ExpenseRows({ groups, onEdit, showDayHeaders = true }: Props) {
+export function ExpenseRows({ groups, onEdit, showDayHeaders = true }: ExpenseRowsProps) {
   const { categoryById } = useApp();
 
   return (

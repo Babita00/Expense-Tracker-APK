@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import type { CategoryTotal } from '../lib/analytics';
-import { num, rs, share } from '../lib/money';
+import type { CategoryTotal } from '../../../lib/analytics';
+import type { ChartView } from '../../../components/ViewToggle';
+import { num, rs, share } from '../../../lib/money';
+import { countOf } from '../../../lib/text';
+import { ViewToggle } from '../../../components/ViewToggle';
 
-interface Props {
+interface CategoryBarsProps {
   rows: CategoryTotal[];
   total: number;
   /** Clicking a bar drills into that category. */
@@ -16,8 +19,8 @@ interface Props {
  * their label and icon, never by hue. Values are direct-labelled at the tip,
  * and the same numbers are available in the table view.
  */
-export function CategoryBars({ rows, total, onSelect }: Props) {
-  const [view, setView] = useState<'chart' | 'table'>('chart');
+export function CategoryBars({ rows, total, onSelect }: CategoryBarsProps) {
+  const [view, setView] = useState<ChartView>('chart');
 
   const max = rows.length > 0 ? rows[0].total : 0;
 
@@ -26,9 +29,7 @@ export function CategoryBars({ rows, total, onSelect }: Props) {
       <div className="card-head">
         <div>
           <h3 className="card-title">Spending by category</h3>
-          <p className="card-note" style={{ marginTop: 2 }}>
-            {rows.length} {rows.length === 1 ? 'category' : 'categories'} used
-          </p>
+          <p className="card-note">{countOf(rows.length, 'category', 'categories')} used</p>
         </div>
         <ViewToggle view={view} onChange={setView} label="category chart" />
       </div>
@@ -47,7 +48,7 @@ export function CategoryBars({ rows, total, onSelect }: Props) {
                 type="button"
                 className="hbar-row"
                 onClick={() => onSelect?.(row.category.id)}
-                title={`${row.category.name}: ${rs(row.total)} across ${row.count} ${row.count === 1 ? 'entry' : 'entries'} (${pct.toFixed(1)}% of the month)`}
+                title={`${row.category.name}: ${rs(row.total)} across ${countOf(row.count, 'entry', 'entries')} (${pct.toFixed(1)}% of the month)`}
               >
                 <span className="hbar-head">
                   <span className="hbar-name">
@@ -96,21 +97,6 @@ export function CategoryBars({ rows, total, onSelect }: Props) {
           </tfoot>
         </table>
       )}
-    </div>
-  );
-}
-
-export function ViewToggle({
-  view, onChange, label,
-}: {
-  view: 'chart' | 'table';
-  onChange: (v: 'chart' | 'table') => void;
-  label: string;
-}) {
-  return (
-    <div className="viewtoggle" role="group" aria-label={`View ${label} as`}>
-      <button aria-pressed={view === 'chart'} onClick={() => onChange('chart')}>Chart</button>
-      <button aria-pressed={view === 'table'} onClick={() => onChange('table')}>Table</button>
     </div>
   );
 }

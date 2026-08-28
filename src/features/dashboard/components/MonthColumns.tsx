@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import type { MonthTotal } from '../lib/analytics';
-import { MONTHS } from '../lib/nepaliDate';
-import { compact, num, rs } from '../lib/money';
-import { ViewToggle } from './CategoryBars';
+import type { MonthTotal } from '../../../lib/analytics';
+import type { ChartView } from '../../../components/ViewToggle';
+import { MONTHS } from '../../../lib/nepaliDate';
+import { compact, num, rs } from '../../../lib/money';
+import { countOf } from '../../../lib/text';
+import { ViewToggle } from '../../../components/ViewToggle';
 
 const PLOT_H = 148;   // drawable height for the bars, in px
 const CAP_ROOM = 20;  // headroom so a direct label never clips off the top
 
-interface Props {
+interface MonthColumnsProps {
   series: MonthTotal[];
   /** The month the dashboard is currently scoped to - emphasised, not recoloured. */
   currentKey: string;
@@ -22,8 +24,8 @@ interface Props {
  * selected column and the biggest one; the rest are carried by the gridlines,
  * the hover title, and the table view.
  */
-export function MonthColumns({ series, currentKey, onSelect }: Props) {
-  const [view, setView] = useState<'chart' | 'table'>('chart');
+export function MonthColumns({ series, currentKey, onSelect }: MonthColumnsProps) {
+  const [view, setView] = useState<ChartView>('chart');
 
   const peak = Math.max(...series.map((m) => m.total), 0);
   const top = niceMax(peak);
@@ -37,9 +39,7 @@ export function MonthColumns({ series, currentKey, onSelect }: Props) {
       <div className="card-head">
         <div>
           <h3 className="card-title">Month comparison</h3>
-          <p className="card-note" style={{ marginTop: 2 }}>
-            Last {series.length} Nepali months
-          </p>
+          <p className="card-note">Last {series.length} Nepali months</p>
         </div>
         <ViewToggle view={view} onChange={setView} label="month comparison" />
       </div>
@@ -48,7 +48,7 @@ export function MonthColumns({ series, currentKey, onSelect }: Props) {
         <p className="chart-empty">Nothing recorded in these months yet.</p>
       ) : view === 'chart' ? (
         <div className="colchart">
-          <div style={{ paddingLeft: 38 }}>
+          <div className="colchart-plot">
             <div className="col-grid" style={{ position: 'relative', paddingTop: CAP_ROOM }}>
               {ticks.map((value) => (
                 <div
@@ -75,9 +75,8 @@ export function MonthColumns({ series, currentKey, onSelect }: Props) {
                         isCurrent && 'is-current',
                         month.total === 0 && 'is-empty',
                       ].filter(Boolean).join(' ')}
-                      style={{ height: '100%' }}
                       onClick={() => onSelect?.(month.year, month.month)}
-                      title={`${MONTHS[month.month]} ${month.year}: ${rs(month.total)} across ${month.count} ${month.count === 1 ? 'entry' : 'entries'}`}
+                      title={`${MONTHS[month.month]} ${month.year}: ${rs(month.total)} across ${countOf(month.count, 'entry', 'entries')}`}
                       aria-label={`${MONTHS[month.month]} ${month.year}, ${rs(month.total)}`}
                     >
                       {showCap && month.total > 0 && (
@@ -114,7 +113,7 @@ export function MonthColumns({ series, currentKey, onSelect }: Props) {
           <tbody>
             {series.map((month) => (
               <tr key={month.key}>
-                <td style={{ fontWeight: month.key === currentKey ? 650 : 400 }}>
+                <td className={month.key === currentKey ? 'is-current' : undefined}>
                   {MONTHS[month.month]} {month.year}
                 </td>
                 <td className="num">{month.count}</td>

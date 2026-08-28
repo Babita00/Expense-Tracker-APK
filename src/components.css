@@ -30,6 +30,8 @@
 .btn-ghost   { background: transparent; color: var(--text-secondary); }
 .btn-block   { width: 100%; }
 .btn-sm      { height: 36px; padding: 0 13px; font-size: 13.5px; border-radius: var(--r-sm); }
+/* a destructive primary action - the shape of btn-primary, the critical colour */
+.btn-critical { background: var(--critical); color: #fff; }
 
 /* icon-only tap target - meets the 24px+ minimum with room to spare */
 .icon-btn {
@@ -112,6 +114,7 @@
   color: var(--text-secondary);
   margin-bottom: 6px;
 }
+.field-label .optional { font-weight: 400; color: var(--text-muted); }
 
 .input,
 .textarea,
@@ -133,6 +136,20 @@
   box-shadow: 0 0 0 3px var(--series-1-wash);
 }
 .textarea { resize: vertical; min-height: 74px; line-height: 1.45; }
+/* a select sized to its own content, for toolbars rather than forms */
+.select.is-compact {
+  width: auto;
+  padding: 7px 30px 7px 10px;
+  font-size: 13.5px;
+  border-radius: 8px;
+}
+
+/* pasted JSON reads as data, not prose */
+.textarea.is-code {
+  min-height: 120px;
+  font-size: 12px;
+  font-family: ui-monospace, monospace;
+}
 
 .select {
   background-image: linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
@@ -217,6 +234,24 @@
   box-shadow: inset 0 0 0 2px var(--series-1);
 }
 .cat-chip[aria-pressed="true"] .name { color: var(--text-primary); font-weight: 620; }
+
+/* icon-only chips - the emoji is the whole label, so the cells stay small */
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+  gap: 6px;
+}
+.emoji-grid .cat-chip { padding: 9px 0; }
+
+/* the month grid in the jump-to-month sheet */
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.month-grid .cat-chip { padding: 13px 6px; }
+.month-grid .name { font-size: 13.5px; font-weight: 560; }
+.month-grid .name.is-alt { font-size: 11px; font-weight: 550; }
 
 /* ------------------------------------------------------------
    category avatar (used in lists)
@@ -538,6 +573,20 @@
 }
 .cal-day.is-selected .dot { background: rgba(255, 255, 255, .85); }
 
+.cal-day .dot-placeholder { height: 4px; }
+
+.cal-selects {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.datebtn-main { min-width: 0; }
+.datebtn-date { display: block; font-weight: 560; letter-spacing: -0.01em; }
+.datebtn-today { color: var(--text-muted); font-weight: 500; }
+.datebtn-icon { color: var(--text-muted); flex: none; display: flex; }
+
 .cal-foot {
   display: flex;
   align-items: center;
@@ -567,6 +616,16 @@
 .setrow-main { flex: 1; min-width: 0; }
 .setrow-title { font-size: 14.5px; font-weight: 550; }
 .setrow-sub { font-size: 12.5px; color: var(--text-muted); margin-top: 1px; }
+.setrow-title.is-critical { color: var(--critical); }
+
+/* the theme picker fills its card and spells the options out in full */
+.themetoggle { width: 100%; }
+.themetoggle button {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 13px;
+  text-transform: capitalize;
+}
 
 .badge {
   font-size: 10.5px;
@@ -611,3 +670,49 @@
     transition-duration: .001ms !important;
   }
 }
+
+/* ------------------------------------------------------------
+   screen furniture - the small layout rules the pages used to
+   carry as inline styles
+   ------------------------------------------------------------ */
+
+.topbar-heading { min-width: 0; }
+
+.rows.is-spaced { margin-top: 12px; }
+
+.card.is-tight { padding: 14px; }
+.card-head .card-note { margin-top: 2px; }
+
+/* a note that closes a section rather than sitting inside a card */
+.card-note.is-block { padding: 14px 4px 0; line-height: 1.5; }
+.card-note.is-centered { text-align: center; padding-top: 4px; }
+.screen-footer { text-align: center; padding: 26px 0 0; }
+
+/* explanatory copy inside a sheet */
+.sheet-note {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+.sheet-note.is-lead { margin-bottom: 14px; }
+.sheet-action { margin-bottom: 16px; }
+
+/* expenses, scoped to a single day */
+.daypicker { padding: 2px 0 12px; }
+
+.daytotal {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 16px;
+}
+.daytotal-main { min-width: 0; }
+.daytotal-main .card-note { margin-top: 2px; }
+.daytotal-amount { font-size: 24px; font-weight: 650; letter-spacing: -0.02em; }
+
+/* inputs driven by another control - present to the DOM, never shown */
+.visually-hidden { display: none; }
+
+/* the column chart's plot area, offset to clear the axis labels */
+.colchart-plot { padding-left: 38px; }

@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import type { Expense, Screen } from './types';
+import type { Expense, MonthPeriod, Screen } from './types';
+import type { Theme } from './lib/theme';
+import type { ExpenseSheetState } from './features/expenses/types';
 import { useApp } from './store';
 import { todayBs } from './lib/nepaliDate';
 import { applyTheme, loadTheme } from './lib/theme';
-import type { Theme } from './lib/theme';
-import { Dashboard } from './screens/Dashboard';
-import { Expenses } from './screens/Expenses';
-import { Categories } from './screens/Categories';
-import { Settings } from './screens/Settings';
-import { ExpenseForm } from './components/ExpenseForm';
+import { DashboardPage } from './features/dashboard/DashboardPage';
+import { ExpensesPage } from './features/expenses/ExpensesPage';
+import { CategoriesPage } from './features/categories/CategoriesPage';
+import { SettingsPage } from './features/settings/SettingsPage';
+import { ExpenseForm } from './features/expenses/components/ExpenseForm';
 import { ChartIcon, GearIcon, ListIcon, PlusIcon, TagIcon } from './components/Icons';
 
 const TABS: { id: Screen; label: string; Icon: typeof ChartIcon }[] = [
@@ -26,28 +27,18 @@ export default function App() {
 
   // The month filter is shared, so drilling from the dashboard into the
   // expense list keeps the period the user was already looking at.
-  const [period, setPeriod] = useState(() => {
-    const t = todayBs();
-    return { year: t.year, month: t.month };
+  const [period, setPeriod] = useState<MonthPeriod>(() => {
+    const today = todayBs();
+    return { year: today.year, month: today.month };
   });
   const [categoryFilter, setCategoryFilter] = useState('');
 
-  const [formOpen, setFormOpen] = useState(false);
-  const [editing, setEditing] = useState<Expense | null>(null);
+  // One value for the expense sheet: what it is open on, or null for closed.
+  const [expenseSheet, setExpenseSheet] = useState<ExpenseSheetState | null>(null);
 
   useEffect(() => { applyTheme(theme); }, [theme]);
 
   const changeMonth = (year: number, month: number) => setPeriod({ year, month });
-
-  const openAdd = () => {
-    setEditing(null);
-    setFormOpen(true);
-  };
-
-  const openEdit = (expense: Expense) => {
-    setEditing(expense);
-    setFormOpen(true);
-  };
 
   const drillIntoCategory = (categoryId: string) => {
     setCategoryFilter(categoryId);
@@ -57,7 +48,7 @@ export default function App() {
   return (
     <div className="app">
       {screen === 'dashboard' && (
-        <Dashboard
+        <DashboardPage
           year={period.year}
           month={period.month}
           onChangeMonth={changeMonth}
@@ -66,22 +57,26 @@ export default function App() {
       )}
 
       {screen === 'expenses' && (
-        <Expenses
+        <ExpensesPage
           year={period.year}
           month={period.month}
           onChangeMonth={changeMonth}
           categoryFilter={categoryFilter}
           onChangeCategory={setCategoryFilter}
-          onEdit={openEdit}
+          onEdit={(expense: Expense) => setExpenseSheet({ mode: 'edit', expense })}
         />
       )}
 
-      {screen === 'categories' && <Categories />}
+      {screen === 'categories' && <CategoriesPage />}
 
-      {screen === 'settings' && <Settings theme={theme} onChangeTheme={setTheme} />}
+      {screen === 'settings' && <SettingsPage theme={theme} onChangeTheme={setTheme} />}
 
       {screen !== 'settings' && (
-        <button className="fab" onClick={openAdd} aria-label="Add expense">
+        <button
+          className="fab"
+          onClick={() => setExpenseSheet({ mode: 'create' })}
+          aria-label="Add expense"
+        >
           <PlusIcon />
         </button>
       )}
@@ -100,14 +95,15 @@ export default function App() {
         ))}
       </nav>
 
-      {/* Keyed so each open starts from a clean form rather than resetting
-          itself in an effect. */}
-      <ExpenseForm
-        key={formOpen ? editing?.id ?? 'new' : 'closed'}
-        open={formOpen}
-        editing={editing}
-        onClose={() => setFormOpen(false)}
-      />
+      {/* Mounted only while open, and keyed by subject, so each open starts
+          from a clean form rather than resetting itself. */}
+      {expenseSheet && (
+        <ExpenseForm
+          key={expenseSheet.mode === 'edit' ? expenseSheet.expense.id : 'new'}
+          state={expenseSheet}
+          onClose={() => setExpenseSheet(null)}
+        />
+      )}
 
       {toastMessage && (
         <div className="toast" role="status" aria-live="polite">{toastMessage}</div>

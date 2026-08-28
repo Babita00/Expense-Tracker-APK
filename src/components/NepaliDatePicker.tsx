@@ -45,10 +45,9 @@ export function NepaliCalendar({ value, onSelect, marked }: CalendarProps) {
           <ChevronLeft />
         </button>
 
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', minWidth: 0 }}>
+        <div className="cal-selects">
           <select
-            className="select"
-            style={{ padding: '7px 30px 7px 10px', fontSize: 13.5, borderRadius: 8, width: 'auto' }}
+            className="select is-compact"
             value={view.month}
             onChange={(e) => setView((v) => ({ ...v, month: Number(e.target.value) }))}
             aria-label="Month"
@@ -58,8 +57,7 @@ export function NepaliCalendar({ value, onSelect, marked }: CalendarProps) {
             ))}
           </select>
           <select
-            className="select"
-            style={{ padding: '7px 30px 7px 10px', fontSize: 13.5, borderRadius: 8, width: 'auto' }}
+            className="select is-compact"
             value={view.year}
             onChange={(e) => setView((v) => ({ ...v, year: Number(e.target.value) }))}
             aria-label="Year"
@@ -113,7 +111,7 @@ export function NepaliCalendar({ value, onSelect, marked }: CalendarProps) {
               aria-label={`${formatBs(date)}${hasData ? ', has expenses' : ''}`}
             >
               {day}
-              {hasData ? <span className="dot" /> : <span style={{ height: 4 }} />}
+              {hasData ? <span className="dot" /> : <span className="dot-placeholder" />}
             </button>
           );
         })}
@@ -154,13 +152,13 @@ export function NepaliDateField({ value, onChange, marked, label = 'Date' }: Fie
   return (
     <>
       <button type="button" className="datebtn" onClick={() => setOpen(true)}>
-        <span style={{ minWidth: 0 }}>
-          <span style={{ display: 'block', fontWeight: 560, letterSpacing: '-0.01em' }}>
-            {formatBs(value)}{isToday && <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}> · Today</span>}
+        <span className="datebtn-main">
+          <span className="datebtn-date">
+            {formatBs(value)}{isToday && <span className="datebtn-today"> · Today</span>}
           </span>
           <span className="ad">{formatAd(value)} AD</span>
         </span>
-        <span style={{ color: 'var(--text-muted)', flex: 'none', display: 'flex' }}>
+        <span className="datebtn-icon">
           <CalendarIcon />
         </span>
       </button>

@@ -172,6 +172,24 @@ describe('the app end to end', () => {
     await waitFor(() => expect(heroTotal()).toHaveTextContent('Rs. 250'));
   });
 
+  it('refuses a category name that is already taken', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.click(screen.getByRole('button', { name: /Categories/ }));
+    await user.click(screen.getByRole('button', { name: /New/ }));
+
+    // "food" clashes with the built-in "Food" - two categories with the same
+    // name would split a total the user reads as one number.
+    const dialog = await screen.findByRole('dialog');
+    await user.type(within(dialog).getByLabelText('Name'), 'food');
+    await user.click(within(dialog).getByRole('button', { name: 'Add category' }));
+
+    expect(within(dialog).getByText(/already exists/)).toBeInTheDocument();
+    // Still open - nothing was saved.
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
   it('refuses to save without an amount or a category', async () => {
     const user = userEvent.setup();
     renderApp();
