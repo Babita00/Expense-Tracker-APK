@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Kharcha">
+  <rect width="512" height="512" rx="112" fill="#2a78d6"/>
+  <g fill="#ffffff">
+    <rect x="112" y="286" width="54" height="118" rx="16"/>
+    <rect x="202" y="216" width="54" height="188" rx="16"/>
+    <rect x="292" y="148" width="54" height="256" rx="16"/>
+  </g>
+  <path
+    d="M368 112h56m-56 30h56m-46 0c30 0 44 18 44 38s-14 38-44 38h-10l56 66"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="18"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
