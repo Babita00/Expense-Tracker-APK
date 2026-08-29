@@ -71,13 +71,17 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "build-${{ github.run_number }}" out/kharcha.apk \
-            --title "Kharcha build ${{ github.run_number }}" \
-            --notes "Debug APK built from \`${{ github.sha }}\`.
-
-          **On your phone:** tap \`kharcha.apk\` below to download, then open it to install.
-          Android will ask you to allow installing from this source - that is expected for
-          any app not from the Play Store.
+          cat > release-notes.md <<'NOTES'
+          **On your phone:** tap `kharcha.apk` below to download it, then open the
+          downloaded file to install. Android will ask you to allow installing from
+          this source - that is expected for any app not from the Play Store.
 
           Installing over an existing Kharcha keeps your recorded expenses.
-          Uninstalling first wipes them, so take a backup from Settings before you do."
+          Uninstalling first wipes them, so take a backup from Settings before you do.
+          NOTES
+          echo "" >> release-notes.md
+          echo "Debug build from commit ${{ github.sha }}." >> release-notes.md
+
+          gh release create "build-${{ github.run_number }}" out/kharcha.apk \
+            --title "Kharcha build ${{ github.run_number }}" \
+            --notes-file release-notes.md
