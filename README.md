@@ -127,13 +127,25 @@ the whole bundle is 75 kB gzipped and works offline.
 ```
 src/
   lib/nepaliDate.ts   BS calendar: conversion, month lengths, grids, formatting
-  lib/analytics.ts    slicing and aggregation for the dashboard
+  lib/analytics.ts    slicing and aggregation shared by the screens
   lib/money.ts        rupee formatting and amount parsing
   lib/storage.ts      persistence, validation, backup
   store.tsx           reducer + context
-  components/         charts, date picker, sheet, form, rows
-  screens/            Dashboard, Expenses, Categories, Settings
+  components/         shared UI: sheet, icons, date picker, month nav, toggles
+  features/           one folder per screen (dashboard, expenses, categories, settings)
   test/               calendar, analytics and end-to-end UI tests
+```
+
+Each feature folder holds the same four things, so a screen can be read top to
+bottom without leaving it:
+
+```
+features/categories/
+  CategoriesPage.tsx  layout only - what goes where
+  components/         the pieces it lays out
+  hooks/              store data, memoised into what the page renders
+  utils/              the rules, as pure functions (sorting, usage, validation)
+  types.ts            the shapes those rules pass around
 ```
 
 ### Charts
