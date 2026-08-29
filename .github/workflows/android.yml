@@ -7,6 +7,10 @@ on:
   push:
     branches: [main]
 
+# Needed to publish the APK as a release.
+permissions:
+  contents: write
+
 jobs:
   apk:
     runs-on: ubuntu-latest
@@ -45,10 +49,35 @@ jobs:
           chmod +x ./gradlew
           ./gradlew assembleDebug --no-daemon
 
-      - name: Upload the APK
+      - name: Name the APK for humans
+        run: |
+          mkdir -p out
+          cp android/app/build/outputs/apk/debug/app-debug.apk out/kharcha.apk
+          ls -lh out/kharcha.apk
+
+      # The artifact is a zip, which is awkward to open on a phone. Keep it for
+      # history, but the release below is the one to install from.
+      - name: Upload the APK as a build artifact
         uses: actions/upload-artifact@v4
         with:
           name: kharcha-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: out/kharcha.apk
           if-no-files-found: error
           retention-days: 90
+
+      # A release gives a direct .apk link, so the phone downloads the file
+      # itself rather than a zip that needs extracting.
+      - name: Publish the APK as a release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "build-${{ github.run_number }}" out/kharcha.apk \
+            --title "Kharcha build ${{ github.run_number }}" \
+            --notes "Debug APK built from \`${{ github.sha }}\`.
+
+          **On your phone:** tap \`kharcha.apk\` below to download, then open it to install.
+          Android will ask you to allow installing from this source - that is expected for
+          any app not from the Play Store.
+
+          Installing over an existing Kharcha keeps your recorded expenses.
+          Uninstalling first wipes them, so take a backup from Settings before you do."
